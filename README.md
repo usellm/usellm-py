@@ -37,7 +37,7 @@ print(response.content)
 ## Image Example Usage
 
 ```
-from usellm import Message, Options, UseLLM
+from usellm import Options, UseLLM
 
 # Initialize the service
 service = UseLLM(service_url="https://usellm.org/api/llm")
