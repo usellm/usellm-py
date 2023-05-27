@@ -51,8 +51,8 @@ class Options:
         template: Optional[str] = None,
         inputs: Optional[dict] = None,
         prompt:Optional[str] = None,
-        n:Optional[int] = 1,
-        size:Optional[str] = "256x256"
+        n:Optional[int] = None,
+        size:Optional[str] = None
     ):
         self.messages = messages
         self.stream = stream
