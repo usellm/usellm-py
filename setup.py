@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='usellm',
-    version='0.0.2',
+    version='0.0.3',
     author='Siddhant',
     author_email='siddhant@jovian.com',
     description='Use Large Language Models in Python App',
