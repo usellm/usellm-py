@@ -34,6 +34,16 @@ response = service.chat(options)
 print(response.content)
 ```
 
+## Image Example Usage
+
+```
+use_llm = UseLLM()
+options = Options(prompt="Generate a beautiful landscape", n=3, size="512x512")
+response = use_llm.generate_image(options)
+for image in response.images:
+    print(image)
+```
+
 The above code will generate a response using the OpenAI ChatGPT API. The service URL "https://usellm.org/api/llm" should be used only for testing.
 
 ## Classes and Methods
@@ -43,6 +53,7 @@ The above code will generate a response using the OpenAI ChatGPT API. The servic
 The `UseLLM` class provides the interface for interacting with the LLM service.
 
 Methods:
+
 - `__init__(self, service_url: str)`: Initializes a new instance of the `UseLLM` class.
 - `chat(self, options: Options) -> Message`: Interacts with the LLM using the provided `Options`, and returns a `Message` instance that represents the LLM's response.
 
@@ -54,8 +65,12 @@ The `Options` class represents a set of configuration options for a chat interac
 - `stream`: A boolean indicating if the interaction is a streaming interaction. Note: streaming is currently not supported.
 - `template`: A string representing a message template to guide the conversation.
 - `inputs`: A dictionary of additional inputs for the conversation.
+- `prompt`: A string representing the prompt for generating images.
+- `n`: An integer representing the number of images to generate (default: 1).
+- `size`: A string representing the size of the generated images (default: '256x256').
 
 Methods:
+
 - `__init__(self, messages: Optional[List[Message]] = [], stream: Optional[bool] = None, template: Optional[str] = None, inputs: Optional[dict] = None)`: Initializes a new instance of the `Options` class.
 
 ### 3. `Message` class
@@ -66,12 +81,12 @@ The `Message` class represents a message in a conversation. It consists of two m
 - `content`: The content of the message.
 
 Methods:
+
 - `__init__(self, role: str, content: str)`: Initializes a new instance of the `Message` class.
 - `__repr__(self) -> str`: Returns a string representation of the `Message` instance.
 - `__str__(self) -> str`: Returns a string representation of the `Message` instance.
 - `to_dict(self) -> dict`: Returns a dictionary representation of the `Message` instance.
 - `to_json(self) -> str`: Returns a JSON string representation of the `Message` instance.
-
 
 ## Exceptions
 
@@ -81,6 +96,5 @@ The library raises an `Exception` in the following situations:
 - If the HTTP response status code from the LLM service is not 200.
 - If the HTTP response from the LLM service contains an "error" field.
 - If the HTTP response from the LLM service does not contain a "choices" field.
-
 
 Please create an issue to report bugs or suggest improvements. Learn more about the original JavaScript library here: https://usellm.org
