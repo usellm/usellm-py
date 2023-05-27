@@ -34,6 +34,7 @@ response = service.chat(options)
 print(response.content)
 ```
 
+The above code will generate a response using the OpenAI ChatGPT API. The service URL "https://usellm.org/api/llm" should be used only for testing.
 
 ## Classes and Methods
 
