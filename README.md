@@ -37,9 +37,18 @@ print(response.content)
 ## Image Example Usage
 
 ```
-use_llm = UseLLM()
+from usellm import Message, Options, UseLLM
+
+# Initialize the service
+service = UseLLM(service_url="https://usellm.org/api/llm")
+
+
+# Interact with the service
 options = Options(prompt="Generate a beautiful landscape", n=3, size="512x512")
-response = use_llm.generate_image(options)
+
+response = service.generate_image(options)
+
+# Print the image URLs
 for image in response.images:
     print(image)
 ```
