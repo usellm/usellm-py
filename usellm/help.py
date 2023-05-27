@@ -1,2 +1,0 @@
-def help():
-    print("WIP")
