@@ -8,6 +8,6 @@ setup(
     description='Use Large Language Models in Python App',
     packages=['usellm'],
     install_requires=[
-        # add list of dependencies here
+       'requests>=2.31.0'
     ],
 )
