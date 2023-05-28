@@ -50,9 +50,9 @@ class Options:
         stream: Optional[bool] = None,
         template: Optional[str] = None,
         inputs: Optional[dict] = None,
-        prompt:Optional[str] = None,
-        n:Optional[int] = None,
-        size:Optional[str] = None
+        prompt: Optional[str] = None,
+        n: Optional[int] = None,
+        size: Optional[str] = None
     ):
         self.messages = messages
         self.stream = stream
@@ -67,7 +67,7 @@ class UseLLM:
     def __init__(self, service_url: str):
         self.service_url = service_url
 
-    def chat(self, options: Options) -> None:
+    def chat(self, options: Options) -> Message:
         if options.stream:
             raise Exception("Streaming is not supported")
 
@@ -100,17 +100,15 @@ class UseLLM:
                 message = json_response["choices"][0]["message"]
                 return Message(role=message["role"], content=message["content"])
 
-
-
-    def generate_image(self, options: Options) -> None:
+    def generate_image(self, options: Options) -> GenerateImageResponse:
 
         if options.prompt is None:
             raise Exception('Prompt is required')
-        
+
         no_of_images = options.n
         if no_of_images is None:
             no_of_images = 1
-        
+
         image_size = options.size
         if image_size is None:
             image_size = '256x256'
