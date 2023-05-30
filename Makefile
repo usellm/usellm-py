@@ -24,4 +24,3 @@ upload:
 
 .PHONY: publish
 publish: clean build upload
-	sh ./deployAlert.sh PUBLIC $(VERSION)
