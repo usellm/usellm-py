@@ -41,6 +41,25 @@ class GenerateImageResponse:
 
     def to_json(self):
         return json.dumps(self.to_dict())
+    
+
+class SpeakResponse:
+    def __init__(self, audio_url):
+        self.audio_url = audio_url
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "audio_url": self.audio_url,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
 
 class Options:
@@ -52,7 +71,10 @@ class Options:
         inputs: Optional[dict] = None,
         prompt: Optional[str] = None,
         n: Optional[int] = None,
-        size: Optional[str] = None
+        size: Optional[str] = None,
+        text: Optional[str] = None,#added
+        model_id: Optional[str]=None,
+        voice_id: Optional[str]=None
     ):
         self.messages = messages
         self.stream = stream
@@ -61,6 +83,8 @@ class Options:
         self.prompt = prompt
         self.n = n
         self.size = size
+        self.text = text
+
 
 
 class UseLLM:
@@ -134,3 +158,32 @@ class UseLLM:
             json_response = response.json()
             res = GenerateImageResponse(images=json_response["images"])
             return res
+
+
+
+    def speak(self, options: Options) -> SpeakResponse:
+        if options.text is None:
+            raise Exception('Input Text is required')
+            
+        #This function will return an audioURL which will be the audio version of the input text.
+        
+        data = json.dumps(
+            {
+                "text": options.text,
+                "$action": 'speak'  
+            }
+        )
+        
+        response = requests.post(
+            self.service_url,
+            headers={"Content-Type": "application/json"},
+            data=data,
+        )
+        
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json()
+            res = SpeakResponse(audio_url = json_response['audioUrl'])
+            return res
+            
