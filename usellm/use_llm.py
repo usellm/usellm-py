@@ -60,6 +60,43 @@ class EmbedResponse:
     def to_json(self):
         return json.dumps(self.to_dict())
 
+
+class SpeakResponse:
+    def __init__(self, audio_url):
+        self.audio_url = audio_url
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "audio_url": self.audio_url,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
+class TranscribeResponse:
+    def __init__(self, text):
+        self.text = text
+        
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "text": self.text,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 class Options:
     def __init__(
         self,
@@ -71,7 +108,11 @@ class Options:
         embed_user: Optional[str] = "",
         prompt: Optional[str] = None,
         n: Optional[int] = None,
-        size: Optional[str] = None
+        size: Optional[str] = None,
+        text: Optional[str] = None,#added
+        model_id: Optional[str]=None,
+        voice_id: Optional[str]=None,
+        audio_url: Optional[str]=None, #added
     ):
         self.messages = messages
         self.stream = stream
@@ -82,6 +123,8 @@ class Options:
         self.size = size
         self.embed_input = embed_input
         self.embed_user = embed_user
+        self.text = text
+        self.audio_url = audio_url
 
 
 class UseLLM:
@@ -154,8 +197,8 @@ class UseLLM:
         else:
             json_response = response.json()
             res = GenerateImageResponse(images=json_response["images"])
-            return res
-        
+            return res        
+
     def embed(self, options: Options) -> EmbedResponse:
         
         if options.embed_input is None:
@@ -178,4 +221,59 @@ class UseLLM:
         else:
             json_response = response.json()
             res = EmbedResponse(embeddings=json_response["embeddings"])
+            return res
+
+
+
+    def speak(self, options: Options) -> SpeakResponse:
+        if options.text is None:
+            raise Exception('Input Text is required')
+            
+        #This function will return an audioURL which will be the audio version of the input text.
+        
+        data = json.dumps(
+            {
+                "text": options.text,
+                "$action": 'speak'  
+            }
+        )
+        
+        response = requests.post(
+            self.service_url,
+            headers={"Content-Type": "application/json"},
+            data=data,
+        )
+        
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json()
+            res = SpeakResponse(audio_url = json_response['audioUrl'])
+            return res
+            
+
+
+    def transcribe(self,options: Options) -> TranscribeResponse:
+
+        if options.audio_url is None:
+            raise Exception('Input Audio Url is Missing')
+        
+        data = json.dumps(
+        {
+            "audioUrl" : options.audio_url,
+            "$action" : 'transcribe'
+        }
+        )
+        
+        response = requests.post(
+                self.service_url,
+                headers={"Content-Type": "application/json"},
+                data=data,
+            )
+        
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json() 
+            res = TranscribeResponse(text = json_response['text'])
             return res
