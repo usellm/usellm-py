@@ -78,6 +78,23 @@ class SpeakResponse:
     def to_json(self):
         return json.dumps(self.to_dict())
 
+class TranscribeResponse:
+    def __init__(self, text):
+        self.text = text
+        
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "text": self.text,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
 class Options:
     def __init__(
@@ -93,7 +110,8 @@ class Options:
         size: Optional[str] = None,
         text: Optional[str] = None,#added
         model_id: Optional[str]=None,
-        voice_id: Optional[str]=None
+        voice_id: Optional[str]=None,
+        audio_url: Optional[str]=None, #added
     ):
         self.messages = messages
         self.stream = stream
@@ -102,6 +120,10 @@ class Options:
         self.prompt = prompt
         self.n = n
         self.size = size
+        self.embed_input = embed_input
+        self.embed_user = embed_user
+        self.text = text
+        self.audio_url = audio_url
 
 
 class UseLLM:
@@ -228,3 +250,29 @@ class UseLLM:
             res = SpeakResponse(audio_url = json_response['audioUrl'])
             return res
             
+
+
+    def transcribe(self,options: Options) -> TranscribeResponse:
+
+        if options.audio_url is None:
+            raise Exception('Input Audio Url is Missing')
+        
+        data = json.dumps(
+        {
+            "audioUrl" : options.audio_url,
+            "$action" : 'transcribe'
+        }
+        )
+        
+        response = requests.post(
+                self.service_url,
+                headers={"Content-Type": "application/json"},
+                data=data,
+            )
+        
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json() 
+            res = TranscribeResponse(text = json_response['text'])
+            return res

@@ -1,5 +1,4 @@
-from usellm import UseLLM, Options, Message
-
+from usellm import UseLLM, Options
 # Initialize the Service
 service = UseLLM(service_url="https://usellm.org/api/llm")
 
