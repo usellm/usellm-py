@@ -42,6 +42,23 @@ class GenerateImageResponse:
     def to_json(self):
         return json.dumps(self.to_dict())
 
+class EmbedResponse:
+    def __init__(self, embeddings):
+        self.embeddings = embeddings
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "embeddings": self.embeddings,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
 class Options:
     def __init__(
@@ -50,6 +67,8 @@ class Options:
         stream: Optional[bool] = None,
         template: Optional[str] = None,
         inputs: Optional[dict] = None,
+        embed_input: Optional[str] = "",
+        embed_user: Optional[str] = "",
         prompt: Optional[str] = None,
         n: Optional[int] = None,
         size: Optional[str] = None
@@ -61,6 +80,8 @@ class Options:
         self.prompt = prompt
         self.n = n
         self.size = size
+        self.embed_input = embed_input
+        self.embed_user = embed_user
 
 
 class UseLLM:
@@ -133,4 +154,28 @@ class UseLLM:
         else:
             json_response = response.json()
             res = GenerateImageResponse(images=json_response["images"])
+            return res
+        
+    def embed(self, options: Options) -> EmbedResponse:
+        
+        if options.embed_input is None:
+            raise Exception("Input paragraph is required")
+
+        data = json.dumps(
+            {
+                "input": options.embed_input,
+                "user": options.embed_user,
+                "$action": "embed"
+            }
+        )
+        response = requests.post(
+            self.service_url,
+            headers={"Content-Type": "application/json"},
+            data=data
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json()
+            res = EmbedResponse(embeddings=json_response["embeddings"])
             return res
