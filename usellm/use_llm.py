@@ -60,6 +60,7 @@ class EmbedResponse:
     def to_json(self):
         return json.dumps(self.to_dict())
 
+
 class SpeakResponse:
     def __init__(self, audio_url):
         self.audio_url = audio_url
@@ -102,6 +103,8 @@ class Options:
         self.prompt = prompt
         self.n = n
         self.size = size
+        self.embed_input = embed_input
+        self.embed_user = embed_user
 
 
 class UseLLM:
@@ -227,4 +230,27 @@ class UseLLM:
             json_response = response.json()
             res = SpeakResponse(audio_url = json_response['audioUrl'])
             return res
-            
+        
+    def embed(self, options: Options) -> EmbedResponse:
+        
+        if options.embed_input is None:
+            raise Exception("Input paragraph is required")
+
+        data = json.dumps(
+            {
+                "input": options.embed_input,
+                "user": options.embed_user,
+                "$action": "embed"
+            }
+        )
+        response = requests.post(
+            self.service_url,
+            headers={"Content-Type": "application/json"},
+            data=data
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+        else:
+            json_response = response.json()
+            res = EmbedResponse(embeddings=json_response["embeddings"])
+            return res
