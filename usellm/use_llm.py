@@ -277,4 +277,3 @@ class UseLLM:
             json_response = response.json() 
             res = TranscribeResponse(text = json_response['text'])
             return res
-        
