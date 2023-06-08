@@ -60,6 +60,7 @@ class EmbedResponse:
     def to_json(self):
         return json.dumps(self.to_dict())
 
+
 class SpeakResponse:
     def __init__(self, audio_url):
         self.audio_url = audio_url
