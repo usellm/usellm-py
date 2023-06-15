@@ -5,7 +5,7 @@ with open("README.md", "rb") as fh:
 
 setup(
     name='usellm',
-    version='0.0.6',
+    version='0.0.7',
     author='Siddhant',
     author_email='siddhant@jovian.com',
     url='https://github.com/usellm/usellm-py',
