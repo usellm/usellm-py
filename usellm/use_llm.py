@@ -1,6 +1,7 @@
 from typing import List, Optional
 import json
 import requests
+import numpy as np
 
 
 class Message:
@@ -126,6 +127,16 @@ class Options:
         self.text = text
         self.audio_url = audio_url
 
+class EmbeddingOptions:
+    def __init__(
+        self,
+        embeddings:list[list[any]],
+        query:list[float],
+        top
+    ):
+        self.embeddings = embeddings
+        self.query = query 
+        self.top = top
 
 class UseLLM:
     def __init__(self, service_url: str):
@@ -190,6 +201,7 @@ class UseLLM:
             self.service_url,
             headers={"Content-Type": "application/json"},
             data=data,
+            timeout=5000
         )
 
         if response.status_code != 200:
@@ -277,3 +289,20 @@ class UseLLM:
             json_response = response.json() 
             res = TranscribeResponse(text = json_response['text'])
             return res
+
+    def cosineSimilarity(self, vecA, vecB):
+        dot_product = np.dot(vecA, vecB)
+        magnitude = np.linalg.norm(vecA) * np.linalg.norm(vecB)
+        return dot_product / magnitude
+    
+    
+    def scoreEmbeddings(self, options:EmbeddingOptions) -> List[float]:
+        scores = [self.cosineSimilarity(options.query, vector) for vector in options.embeddings]
+        sorted_scores = sorted([(score, index) for index, score in enumerate(scores)], key=lambda x: x[0], reverse=True)
+        
+        
+        if options.top is not None:
+            sorted_scores = sorted_scores[:options.top]
+    
+        return sorted_scores
+
