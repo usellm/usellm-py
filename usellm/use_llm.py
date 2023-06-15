@@ -291,8 +291,6 @@ class UseLLM:
             return res
 
     def cosineSimilarity(self, vecA, vecB):
-#         print("A", vecA)
-#         print("B", vecB)
         dot_product = np.dot(vecA, vecB)
         magnitude = np.linalg.norm(vecA) * np.linalg.norm(vecB)
         return dot_product / magnitude
@@ -301,8 +299,7 @@ class UseLLM:
     def scoreEmbeddings(self, options:EmbeddingOptions) -> List[float]:
         scores = [self.cosineSimilarity(options.query, vector) for vector in options.embeddings]
         sorted_scores = sorted([(score, index) for index, score in enumerate(scores)], key=lambda x: x[0], reverse=True)
-        print(sorted_scores)
-    
+        
         
         if options.top is not None:
             sorted_scores = sorted_scores[:options.top]
